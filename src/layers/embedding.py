@@ -7,9 +7,9 @@ class Embedding(nn.Module):
         super().__init__()
         # Config and hyperparameters
         self.config = config
-        self.input_embedding = nn.Embedding(config.vocab_size, config.embedding_dim)
-        self.position_embedding = nn.Embedding(config.max_seq_len, config.embedding_dim)
-        self.layer_norm = nn.LayerNorm(config.embedding_dim)
+        self.input_embedding = nn.Embedding(config.vocab_size, config.model_dim)
+        self.position_embedding = nn.Embedding(config.max_seq_len, config.model_dim)
+        self.layer_norm = nn.LayerNorm(config.model_dim)
         self.dropout = nn.Dropout(config.dropout)
         self._init_weights()
 
