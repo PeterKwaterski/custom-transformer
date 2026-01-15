@@ -208,3 +208,5 @@ __marimo__/
 
 guide.md
 logs/
+/results/
+*.pth
