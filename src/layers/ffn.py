@@ -1,6 +1,6 @@
 from torch import nn
 import torch
-from config import Config
+from src.config import Config
 
 class FFN(nn.Module):
     def __init__(self, config: Config, input_size: int, hidden_sizes: list[int]):
@@ -19,5 +19,5 @@ class FFN(nn.Module):
         layers.append(nn.Linear(prev_size, config.model_dim))
         self.ffn = nn.Sequential(*layers)
 
-        def forward(self, x: torch.Tensor) -> torch.Tensor:
-            return self.ffn(x)
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.ffn(x)
