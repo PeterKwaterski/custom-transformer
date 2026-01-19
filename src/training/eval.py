@@ -1,4 +1,4 @@
-from src.data.dataloader import TestingDataLoader
+from src.data.dataloader import TestingDataLoader, PAD_TOKEN_ID
 from src.transformer.decoder import Decoder
 from src.config import Config
 from torch.nn import CrossEntropyLoss
@@ -20,7 +20,7 @@ class Evaluator:
                 y = batch['labels']
                 padding_mask = batch['padding_mask']
                 y_hat = self.model(X, padding_mask=padding_mask)
-                loss = CrossEntropyLoss()(y_hat.reshape(-1, y_hat.size(-1)), y.reshape(-1))
+                loss = CrossEntropyLoss(ignore_index=PAD_TOKEN_ID)(y_hat.reshape(-1, y_hat.size(-1)), y.reshape(-1))
                 total_loss += loss.item()
                 predictions = y_hat.argmax(dim=-1)
                 correct_mask = (predictions == y) & padding_mask

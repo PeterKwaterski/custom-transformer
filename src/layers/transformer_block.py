@@ -17,9 +17,9 @@ class TransformerBlock(nn.Module):
 
     def forward(self, x: torch.Tensor, padding_mask: torch.Tensor = None) -> torch.Tensor:
         attention = self.attention(x, padding_mask=padding_mask)
-        attention = x + self.layer_norm_1(attention)
+        attention = self.layer_norm_1(x + attention)
         attention = self.dropout_1(attention)
         ffn = self.ffn(attention)
-        ffn = attention + self.layer_norm_2(ffn)
-        output = self.dropout_2(ffn)
+        output = self.layer_norm_2(attention + ffn)
+        output = self.dropout_2(output)
         return output

@@ -23,7 +23,9 @@ class Attention(nn.Module):
         denominator = torch.sqrt(torch.tensor(self.head_dim, dtype=q.dtype, device=q.device))
         attention_scores = numerator / denominator
         attention_scores = self._apply_casual_mask(attention_scores, padding_mask=padding_mask)
-        attention = torch.softmax(attention_scores, dim=-1) @ v
+        attention = torch.softmax(attention_scores, dim=-1)
+        attention = self.dropout(attention)
+        attention = attention @ v
         return attention
 
     def _split_heads(self, x: torch.Tensor) -> torch.Tensor:
@@ -38,8 +40,10 @@ class Attention(nn.Module):
         attention_scores = attention_scores.masked_fill(causal_mask, float('-inf'))
 
         if padding_mask is not None:
-            padding_mask_expanded = padding_mask.unsqueeze(1).unsqueeze(2)
-            attention_scores = attention_scores.masked_fill(~padding_mask_expanded, float('-inf'))
+            padding_mask_q = padding_mask.unsqueeze(1).unsqueeze(-1)
+            padding_mask_k = padding_mask.unsqueeze(1).unsqueeze(-2)
+            attention_scores = attention_scores.masked_fill(~padding_mask_q, float('-inf'))
+            attention_scores = attention_scores.masked_fill(~padding_mask_k, float('-inf'))
         return attention_scores
 
     

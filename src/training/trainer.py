@@ -1,8 +1,9 @@
 from src.config import Config
-from src.data.dataloader import TrainingDataLoader
+from src.data.dataloader import TrainingDataLoader, PAD_TOKEN_ID
 from src.transformer.decoder import Decoder
 from torch.nn import CrossEntropyLoss
 from torch.optim import AdamW
+import torch
 
 class Trainer:
     def __init__(self, config: Config):
@@ -19,8 +20,9 @@ class Trainer:
                 y = batch['labels']
                 padding_mask = batch['padding_mask']
                 y_hat = self.model(X, padding_mask=padding_mask)
-                loss = CrossEntropyLoss()(y_hat.reshape(-1, y_hat.size(-1)), y.reshape(-1))
+                loss = CrossEntropyLoss(ignore_index=PAD_TOKEN_ID)(y_hat.reshape(-1, y_hat.size(-1)), y.reshape(-1))
                 loss.backward()
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
                 optimizer.step()
                 optimizer.zero_grad()
                 print(f"Epoch {epoch}, Batch {i}, Loss {loss.item()}")
