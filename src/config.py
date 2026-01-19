@@ -13,6 +13,6 @@ class Config:
         self.training_size = 10000
         self.testing_size = 1000
         self.pad_token_id = "<pad>"
-        self.epochs = 5
+        self.epochs = 20
         self.learning_rate = 0.001
         self.batch_size = 32

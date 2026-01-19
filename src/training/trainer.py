@@ -21,6 +21,13 @@ class Trainer:
                 padding_mask = batch['padding_mask']
                 y_hat = self.model(X, padding_mask=padding_mask)
                 loss = CrossEntropyLoss(ignore_index=PAD_TOKEN_ID)(y_hat.reshape(-1, y_hat.size(-1)), y.reshape(-1))
+                
+                # Check for NaN or Inf loss
+                if torch.isnan(loss) or torch.isinf(loss):
+                    print(f"Warning: NaN/Inf loss detected at Epoch {epoch}, Batch {i}. Skipping batch.")
+                    optimizer.zero_grad()
+                    continue
+                
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
                 optimizer.step()
